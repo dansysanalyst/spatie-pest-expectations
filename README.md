@@ -93,26 +93,71 @@ expect('first')->not()->toBeEnum(TestEnum::first);
 
 ### Helpers
 
-This package offers various helpers that you can tack on any test. Here's an example of the `whenGitHubActions` helper. When tacked on to a test, the test will be skipped unless you're running it on GitHub Actions.
-
-```php
-it('can only run well on github actions', function () {
-    // your test
-})->whenGitHubActions();
-```
+This package offers various helpers that you can tack on any test. Here's an example of the `whenGitHubActions` helper. When tacked on to a test, Skips the test unless you're running it on GitHub Actions.
 
 To use the helpers, you should call `registerSpatiePestHelpers()` in your `Pest.php` file.
 
+```php
+//Tests/Pest.php
+
+<?php
+
+//...
+
+registerSpatiePestHelpers();
+
+```
+
+#### Skipping Test Helpers
+
+This package provides a collection of Helpers to skip tests based on different conditions, making writing tests even easier.
+
+Here are some examples:
+
+```php
+it('will not run on Windows', function () {
+    // your test
+})->skipOnWindows();
+
+it('runs only on PHP 8.2+', function () {
+    // your test
+})->requiresMinPhpVersion('8.2');
+
+it('runs only if foobar binary exists', function () {
+    // your test
+})->requiresFile('/usr/bin/foobar');
+
+it('runs only if "Spatie Foobar" is required in composer.json', function () {
+    // your test
+})->requiresDependency('spatie/foobar');
+```
+
 These helpers are provided by this package:
 
+##### PHP Helpers
+
+- `requiresMinPhpVersion($version)`: Skips the test unless running on the given PHP version, or higher. You can pass a version like `8` or `8.1`.
+- `whenWindows()`: Skips the test unless running on Windows OS.
+- `whenMac()`: Skips the test unless running on macOS.
+- `whenLinux()`: Skips the test unless running on Linux OS.
+- `whenGitHubActions()`: Skips the test unless running on GitHub Actions.
+- `skipOnGitHubActions()`: Skips the test when running on GitHub Actions.
+- `requiresFile($filepath)`: Skips the test when the given file does not exist. This can be useful if your test depends on an external binary in your operating system.
+- `skipWhenFileExists($filepath)`: Skips the test when the given file exists.
+- `requiresDependency($dependency)`: Skips the test when a composer dependency is missing (not required).
+- `skipWhenDependencyExists($dependency)`: Skips the test when a composer dependency in required.
+- `requiresPhpExtension($extension)`: Skips the test when a PHP extension is missing.
+- `skipWhenPhpExtensionExists($extension)`: Skips the test when a PHP extension is installed.
+- `requiresServerToBeAvailable($server, $port)`: this can be useful in Browser testing.
+
+##### Laravel Helpers
+
+- `requiresLaravelVersion($version)`: Skips the test unless running on the given Laravel version, or higher. You can pass a version like `10` or `10.1`.
 - `whenConfig($configKey)`: only run the test when the given Laravel config key is set
 - `whenEnvVar($envVarName)`: only run the test when the given environment variable is set
-- `whenWindows`: the test will be skipped unless running on Windows
-- `whenMac`: the test will be skipped unless running on macOS
-- `whenLinux`: the test will be skipped unless running on Linux
-- `whenGitHubActions()`: the test will be skipped unless running on GitHub Actions
-- `skipOnGitHubActions()`: the test will be skipped when running on GitHub Actions
-- `whenPhpVersion($version)`: the test will be skipped unless running on the given PHP version, or higher. You can pass a version like `8` or `8.1`.
+- `requiresMysql()`: Skips the test unless the database driver is MySQL.
+- `requiresSqlite()`: Skips the test unless the database driver is SQLite.
+- `requiresPostgre()`: Skips the test unless the database driver is PostgreSQL.
 
 ## Testing
 
